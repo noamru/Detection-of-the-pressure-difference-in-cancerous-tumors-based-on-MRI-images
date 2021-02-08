@@ -16,13 +16,17 @@ def calculate_sum_of_intensities_inside_strip(contour, image, image_index, strip
     ctr = np.array(cnt).reshape((-1, 1, 2)).astype(np.int32)
     cv2.drawContours(mask, [ctr], 0, 255, -1)
 
-    # create the strip around the contour
-    kernel = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], np.uint8)
-    dilate_mask = cv2.dilate(mask, kernel, iterations=strip_thickness)
-    strip = dilate_mask - mask
-    # a = np.hstack((mask, strip))
-    # cv2.imshow("mask", a)
-    # k = cv2.waitKey(0)
+    # check if the sum request is inside the contour or inside a strip
+    if strip_thickness == 0:
+        strip = mask
+    else:
+        # create the strip around the contour
+        kernel = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], np.uint8)
+        dilate_mask = cv2.dilate(mask, kernel, iterations=strip_thickness)
+        strip = dilate_mask - mask
+        # a = np.hstack((mask, strip))
+        # cv2.imshow("mask", a)
+        # k = cv2.waitKey(0)
 
     # get the pixels numbers in the strip
     pixelpoints = cv2.findNonZero(strip)
@@ -37,7 +41,7 @@ def calculate_sum_of_intensities_inside_strip(contour, image, image_index, strip
     # normalization
     intensities_sum /= len(pixelpoints)
 
-    print("intensity between contours in image " + str(image_index) + ": " + str(intensities_sum))
+    # print("intensity between contours in image " + str(image_index) + ": " + str(intensities_sum))
     return intensities_sum
 
 
