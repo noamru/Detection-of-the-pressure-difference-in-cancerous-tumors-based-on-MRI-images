@@ -7,6 +7,7 @@ def read_and_cut_MRI_and_contour(cancerArea):
     # read and fit contour
     contour_mat = scipy.io.loadmat('contour.mat')
     contour = [contour_mat['roi'][::2], contour_mat['roi'][1::2]]
+    print(contour)
     contour[0] = contour[0] - 50
     contour[1] = contour[1] - 200
 
