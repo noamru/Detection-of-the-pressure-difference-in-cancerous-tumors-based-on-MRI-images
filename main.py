@@ -1,11 +1,12 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 from read_data import read_and_cut_MRI_and_contour
 from Registration import registration
 from calculate_sum_of_intensities import (calculate_sum_of_intensities_inside_strip,
                                           calculate_sum_of_intensities_inside_mask)
+from LinearRegression import LinearRegression_func
 
 
 if __name__ == "__main__":
@@ -33,7 +34,7 @@ if __name__ == "__main__":
     print(y)
     """
 
-    # calculate sum of pixels intensities in strip
+    # calculate sum of pixels intensities in strip, or in the contour by pass 0 in strip_thickness
     intensities_sums = []
     for i in range(len(registrate_images)):
         intensities_sums.append(calculate_sum_of_intensities_inside_strip(contour, registrate_images[i], i+1, strip_thickness=9))
@@ -42,7 +43,10 @@ if __name__ == "__main__":
     intensities_changes = []
     for i in range(1, len(intensities_sums)):
         intensities_changes.append(intensities_sums[i] - intensities_sums[0])
-        print("change in intensity between image 1 to image " + str(i+1) + ": " + str(intensities_sums[i] - intensities_sums[0]))
+        # print("change in intensity between image 1 to image " + str(i+1) + ": " + str(intensities_sums[i] - intensities_sums[0]))
+
+    # LinearRegression
+    LinearRegression_func(np.array([2, 3, 4, 5]), intensities_changes)
 
     # show plot of the changes in intensity between images
     plt.plot(range(2, 6), intensities_changes, color='r')
