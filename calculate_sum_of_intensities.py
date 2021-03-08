@@ -8,7 +8,7 @@ def calculate_sum_of_intensities_inside_strip(contour, image, image_index, strip
     cnt = np.array([[0] * 2])
     for i in range(len(contour[0])):
         # cnt.append([[contour[0][i][0], contour[1][i][0]]])
-        cnt = np.append(cnt, [[contour[0][i][0], contour[1][i][0]]], axis=0)
+        cnt = np.append(cnt, [[contour[0][i], contour[1][i]]], axis=0)
     cnt = np.delete(cnt, 0, axis=0)  # delete the unnecessary 0 row
 
     # create mask of contour
