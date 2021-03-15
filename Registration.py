@@ -1,9 +1,10 @@
 import cv2
 import numpy as np
 import imutils
+import matplotlib.pyplot as plt
 
 
-def registration(image, reference_image, ransacReprojThreshold, debug=False):
+def registration(image, reference_image, contour, ransacReprojThreshold, debug=False):
     height, width = reference_image.shape
 
     # Create ORB detector with 1000 features.
@@ -61,9 +62,6 @@ def registration(image, reference_image, ransacReprojThreshold, debug=False):
 
     # show the image before registration, image after registration and the reference image for check the registration
     """
-    # contour1 = scale_contour(contour, 2)
-    # print(contour)
-    # print(contour1)
     fig = plt.figure()  # make a figure
     fig.add_subplot(1, 3, 1)
     plt.title("image before\nregistration")
