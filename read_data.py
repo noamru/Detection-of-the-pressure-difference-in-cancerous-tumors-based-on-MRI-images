@@ -7,25 +7,35 @@ from get_contour import read_curve_data
 
 def read_and_cut_MRI_and_contour(patient, cancerArea):
     # number of images
-    files = os.listdir(patient)
-    # print(files)
+    files = os.listdir('patient/'+patient)
     number_of_images = len(files) - 1
     # print("number of images", number_of_images)
 
     # read and fit contour
-    if os.path.isfile(patient+'/contour.mat'):
-        contour_mat = scipy.io.loadmat(patient+'/contour.mat')
+    if os.path.isfile('patient/'+patient+'/contour.mat'):
+        contour_mat = scipy.io.loadmat('patient/'+patient+'/contour.mat')
         contour = [contour_mat['roi'][::2], contour_mat['roi'][1::2]]
         contour[0] = [point[0] for point in contour[0]]
         contour[1] = [point[0] for point in contour[1]]
     else:
-        keyframe = dcmread(patient + "/keyframe.dcm")
+        keyframe = dcmread('patient/'+patient + "/keyframe.dcm")
         contour = read_curve_data(keyframe)
         contour[0] = [point for point in contour[0]]
         contour[1] = [point for point in contour[1]]
     # print(contour)
 
-    # cut images and contour
+    # cut images and contour automatically
+    """
+    rows_start = int(min(contour[1])-55)
+    rows_end = int(max(contour[1])+55)
+    columns_start = int(min(contour[0])-55)
+    columns_end = int(max(contour[0])+55)
+    contour[0] = [point - columns_start for point in contour[0]]
+    contour[1] = [point - rows_start for point in contour[1]]
+    print(rows_start, rows_end, columns_start, columns_end)
+
+    """
+    # cut images and contour manually
     if patient == "P2":
         contour[0] = [point-50 for point in contour[0]]  # contour[0] - 50
         contour[1] = [point-200 for point in contour[1]]  # contour[1] - 200
@@ -40,11 +50,12 @@ def read_and_cut_MRI_and_contour(patient, cancerArea):
         rows_end = 400
         columns_start = 290
         columns_end = 420
+    # """
 
     # read series of MRI pictures
     images = []
     for i in range(1, number_of_images):
-        ds = dcmread(patient+"/t" + str(i) + ".dcm")
+        ds = dcmread('patient/'+patient+"/t" + str(i) + ".dcm")
         images.append(ds.pixel_array)
 
     """
@@ -64,12 +75,12 @@ def read_and_cut_MRI_and_contour(patient, cancerArea):
             plt.imshow(images[i], cmap=plt.cm.gray)
             plt.plot(contour[0],contour[1], color='b')
     else:
-        # cut the area without cancer from the images (fot now only for P2)
+        # cut the area without cancer from the images (for now only for P2 and P3)
         for i in range(len(images)):
-            images[i] = images[i][200:400, 290:440]
-            # fig.add_subplot(2, 3, i + 1)
-            # plt.imshow(images[i], cmap=plt.cm.gray)
-            # plt.plot(contour[0], contour[1], color='b')
+            images[i] = images[i][250:400, 50:200]  # 200:400, 290:440
+            fig.add_subplot(2, 3, i + 1)
+            plt.imshow(images[i], cmap=plt.cm.gray)
+            plt.plot(contour[0], contour[1], color='b')
 
     fig.tight_layout()
     plt.show()
