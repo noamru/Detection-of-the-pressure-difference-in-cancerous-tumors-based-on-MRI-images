@@ -36,7 +36,7 @@ def calculate_sum_of_intensities_inside_strip(contour, image, image_index, strip
     # sum the intensities of the pixels in the strip
     intensities_sum = 0
     for i in range(len(pixelpoints)):
-        intensities_sum += image[pixelpoints[i][0][0], pixelpoints[i][0][1]]
+        intensities_sum += image[pixelpoints[i][0][1], pixelpoints[i][0][0]]
 
     # normalization
     intensities_sum /= len(pixelpoints)
