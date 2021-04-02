@@ -5,6 +5,7 @@ import numpy as np
 def LinearRegression_func(X, y):
     X = X.reshape(-1, 1)
     X = np.concatenate((np.array([[1]] * len(X)), X), axis=1)
+    print("Linear Regression:")
     print("X:\n" + str(X))
     print("y: " + str(y))
     reg = LinearRegression()
