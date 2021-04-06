@@ -7,14 +7,20 @@ import matplotlib.pyplot as plt
 def registration(image, reference_image, contour, ransacReprojThreshold, debug=False):
     height, width = reference_image.shape
 
+    # make black and white image for more accurate registration
+    ret, threshold_image = cv2.threshold(image, 128, 255, cv2.THRESH_BINARY)
+    ret, threshold_reference_image = cv2.threshold(reference_image, 128, 255, cv2.THRESH_BINARY)
+    # cv2.imshow("threshold", np.hstack((np.uint8(threshold_image), np.uint8(image))))
+    # cv2.waitKey()
+
     # Create ORB detector with 1000 features.
     orb_detector = cv2.ORB_create(1000)
 
     # Find keypoints and descriptors.
     # The first arg is the image, second arg is the mask
     #  (which is not reqiured in this case).
-    kp1, d1 = orb_detector.detectAndCompute(np.uint8(image), None)
-    kp2, d2 = orb_detector.detectAndCompute(np.uint8(reference_image), None)
+    kp1, d1 = orb_detector.detectAndCompute(np.uint8(threshold_image), None)
+    kp2, d2 = orb_detector.detectAndCompute(np.uint8(threshold_reference_image), None)
 
     # Match features between the two images.
     # We create a Brute Force matcher with
@@ -39,7 +45,7 @@ def registration(image, reference_image, contour, ransacReprojThreshold, debug=F
 
     # check to see if we should visualize the matched keypoints
     if debug:
-        matchedVis = cv2.drawMatches(np.uint8(image), kp1, np.uint8(reference_image), kp2, matches, None)
+        matchedVis = cv2.drawMatches(np.uint8(threshold_image), kp1, np.uint8(threshold_reference_image), kp2, matches, None)
         matchedVis = imutils.resize(matchedVis, width=1000)
         cv2.imshow("Matched Keypoints", matchedVis)
         cv2.waitKey(0)
@@ -61,7 +67,7 @@ def registration(image, reference_image, contour, ransacReprojThreshold, debug=F
     transformed_img = cv2.warpPerspective(image, homography, (width, height))
 
     # show the image before registration, image after registration and the reference image for check the registration
-    """
+    # """
     fig = plt.figure()  # make a figure
     fig.add_subplot(1, 3, 1)
     plt.title("image before\nregistration")
@@ -81,7 +87,7 @@ def registration(image, reference_image, contour, ransacReprojThreshold, debug=F
 
     fig.tight_layout()
     plt.show()
-    """
+    # """
     """
     # check registration
     overlay = np.uint8(reference_image.copy())
