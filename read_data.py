@@ -25,32 +25,60 @@ def read_and_cut_MRI_and_contour(patient, cancerArea):
     # print(contour)
 
     # cut images and contour automatically
-    """
+    # """
     rows_start = int(min(contour[1])-55)
     rows_end = int(max(contour[1])+55)
     columns_start = int(min(contour[0])-55)
     columns_end = int(max(contour[0])+55)
     contour[0] = [point - columns_start for point in contour[0]]
     contour[1] = [point - rows_start for point in contour[1]]
-    print(rows_start, rows_end, columns_start, columns_end)
+    # print(rows_start, rows_end, columns_start, columns_end)
 
     """
     # cut images and contour manually
     if patient == "P2":
-        contour[0] = [point-50 for point in contour[0]]  # contour[0] - 50
-        contour[1] = [point-200 for point in contour[1]]  # contour[1] - 200
         rows_start = 200
         rows_end = 400
         columns_start = 50
         columns_end = 200
+        contour[0] = [point - columns_start for point in contour[0]]
+        contour[1] = [point - rows_start for point in contour[1]]
     if patient == "P3":
-        contour[0] = [point-290 for point in contour[0]]  # contour[0] - 290
-        contour[1] = [point-250 for point in contour[1]]  # contour[1] - 250
         rows_start = 250
         rows_end = 400
         columns_start = 290
         columns_end = 420
-    # """
+        contour[0] = [point - columns_start for point in contour[0]]
+        contour[1] = [point - rows_start for point in contour[1]]
+    if patient == "P4":
+        rows_start = 220
+        rows_end = 360
+        columns_start = 310
+        columns_end = 440
+        contour[0] = [point - columns_start for point in contour[0]]
+        contour[1] = [point - rows_start for point in contour[1]]
+    if patient == "P5":
+        rows_start = 270
+        rows_end = 410
+        columns_start = 290
+        columns_end = 440
+        contour[0] = [point - columns_start for point in contour[0]]
+        contour[1] = [point - rows_start for point in contour[1]]
+    if patient == "P7":
+        rows_start = 240
+        rows_end = 420
+        columns_start = 40
+        columns_end = 210
+        contour[0] = [point - columns_start for point in contour[0]]
+        contour[1] = [point - rows_start for point in contour[1]]
+    if patient == "P8":
+        rows_start = 130
+        rows_end = 290
+        columns_start = 100
+        columns_end = 220
+        contour[0] = [point - columns_start for point in contour[0]]
+        contour[1] = [point - rows_start for point in contour[1]]
+    """
 
     # read series of MRI pictures
     images = []
@@ -77,7 +105,7 @@ def read_and_cut_MRI_and_contour(patient, cancerArea):
     else:
         # cut the area without cancer from the images (for now only for P2 and P3)
         for i in range(len(images)):
-            images[i] = images[i][250:400, 50:200]  # 200:400, 290:440
+            images[i] = images[i][200:400, 290:440]  # 250:400, 50:200
             fig.add_subplot(2, 3, i + 1)
             plt.imshow(images[i], cmap=plt.cm.gray)
             plt.plot(contour[0], contour[1], color='b')
