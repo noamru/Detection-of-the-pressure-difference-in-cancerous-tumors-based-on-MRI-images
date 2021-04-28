@@ -24,9 +24,9 @@ def calculate_sum_of_intensities_inside_strip(contour, image, image_index, strip
         kernel = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], np.uint8)
         dilate_mask = cv2.dilate(mask, kernel, iterations=strip_thickness)
         strip = dilate_mask - mask
-        # a = np.hstack((mask, strip))
-        # cv2.imshow("mask", a)
-        # k = cv2.waitKey(0)
+    # a = np.hstack((mask, strip))
+    # cv2.imshow("mask", a)
+    # k = cv2.waitKey(0)
 
     # get the pixels numbers in the strip
     pixelpoints = cv2.findNonZero(strip)
