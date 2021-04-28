@@ -1,11 +1,12 @@
-from pydicom import dcmread
 import scipy.io
 import matplotlib.pyplot as plt
 import os
+import math
+from pydicom import dcmread
 from get_contour import read_curve_data
 
 
-def read_and_cut_MRI_and_contour(patient, cancerArea):
+def read_and_cut_MRI_and_contour(patient, cancerArea, strip_thickness):
     # number of images
     files = os.listdir('patient/'+patient)
     number_of_images = len(files) - 1
@@ -95,18 +96,34 @@ def read_and_cut_MRI_and_contour(patient, cancerArea):
     """
 
     fig = plt.figure()  # make a figure
+    if strip_thickness == 0:
+        fig.suptitle("patient " + patient + ", inside tumor", fontsize=16)
+    else:
+        fig.suptitle("patient " + patient + ", strip of " + str(strip_thickness) + " pixels", fontsize=16)
+
+    number_of_images_in_row = 3
     if cancerArea:
         # cut the area with cancer from the images
         for i in range(len(images)):
             images[i] = images[i][rows_start:rows_end, columns_start:columns_end]
-            fig.add_subplot(2, 3, i+1)
+            fig.add_subplot(math.ceil(number_of_images/number_of_images_in_row), number_of_images_in_row, i+1)
+            plt.title("t"+str(i+1))
             plt.imshow(images[i], cmap=plt.cm.gray)
             plt.plot(contour[0],contour[1], color='b')
     else:
-        # cut the area without cancer from the images (for now only for P2 and P3)
+        # cut the area without cancer from the images
+        """
+        P2 = 200:400, 275:440
+        P3 = 250:400, 80:220
+        P4 = 180:400, 65:220
+        P5 = 300:450, 65:220
+        P7 = 310:450, 310:450
+        P8 = 130:290, 300:450
+        """
         for i in range(len(images)):
-            images[i] = images[i][200:400, 290:440]  # 250:400, 50:200
-            fig.add_subplot(2, 3, i + 1)
+            images[i] = images[i][130:290, 300:450]
+            fig.add_subplot(math.ceil(number_of_images/number_of_images_in_row), number_of_images_in_row, i+1)
+            plt.title("t" + str(i+1))
             plt.imshow(images[i], cmap=plt.cm.gray)
             plt.plot(contour[0], contour[1], color='b')
 
