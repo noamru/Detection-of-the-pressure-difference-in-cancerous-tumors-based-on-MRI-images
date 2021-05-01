@@ -16,7 +16,7 @@ def calculate_sum_of_intensities_inside_strip(contour, image, image_index, strip
     ctr = np.array(cnt).reshape((-1, 1, 2)).astype(np.int32)
     cv2.drawContours(mask, [ctr], 0, 255, -1)
 
-    # check if the sum request is inside the contour or inside a strip
+    # check if the requested sum is inside the contour or inside a strip
     if strip_thickness == 0:
         strip = mask
     else:
