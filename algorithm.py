@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 from read_data import read_and_cut_MRI_and_contour
 from Registration import registration
 from calculate_sum_of_intensities import (calculate_sum_of_intensities_inside_strip,
@@ -9,14 +8,20 @@ from calculate_sum_of_intensities import (calculate_sum_of_intensities_inside_st
 from LinearRegression import LinearRegression_func
 
 
-def algorithm(patient, strip_thickness):
-    if strip_thickness == 0:
+def algorithm(patient, strip_thickness, tumorArea=True, rows_start=None, rows_end=None, columns_start=None,
+              columns_end=None):
+    if not tumorArea:
+        print("\npatient " + patient + ", area without tumor:")
+    elif strip_thickness == 0:
         print("\npatient " + patient + ", inside tumor:")
     else:
         print("\npatient " + patient + ", strip of " + str(strip_thickness) + " pixels:")
 
     # Open the image files
-    images, contour, number_of_images = read_and_cut_MRI_and_contour(patient=patient, cancerArea=True, strip_thickness=strip_thickness)
+    images, contour, number_of_images = read_and_cut_MRI_and_contour(patient=patient, strip_thickness=strip_thickness,
+                                                                     tumorArea=tumorArea, rows_start=rows_start,
+                                                                     rows_end=rows_end, columns_start=columns_start,
+                                                                     columns_end=columns_end)
     # print(contour)
 
     # """
@@ -58,11 +63,24 @@ def algorithm(patient, strip_thickness):
     # show plot of the changes in intensity between images
     plt.plot(range(2, number_of_images), intensities_changes, 'ro')
     plt.xticks(range(2, number_of_images))  # set the x-labels to integers
-    plt.title("increasing of intensity per pixel compared to the first image.\narea with cancer, inside strip of " +
-              str(strip_thickness)+" pixels.\npressure estimate: "+str(round(coef, 3))+", success rates: "+str(round(score, 3)*100)+"%")
+
+    if not tumorArea:
+        plt.title("increasing of intensity per pixel compared to the first image.\narea without tumor."
+                  "\npressure estimate: " + str(round(coef, 3)) + ", success rates: " + str(
+            round(score, 3) * 100) + "%")
+    elif strip_thickness == 0:
+        plt.title("increasing of intensity per pixel compared to the first image.\narea with tumor, inside tumor."
+                  "\npressure estimate: " + str(round(coef, 3)) + ", success rates: " + str(
+            round(score, 3) * 100) + "%")
+    else:
+        plt.title("increasing of intensity per pixel compared to the first image.\narea with tumor, inside strip of " +
+                  str(strip_thickness) + " pixels.\npressure estimate: " + str(
+                   round(coef, 3)) + ", success rates: " + str(round(score, 3) * 100) + "%")
     plt.xlabel("image number")
     plt.ylabel("intensity increase")
     plt.show()
+
+    return round(coef, 3)
 
     """
     # calculate pixels intensities outside
