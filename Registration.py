@@ -67,7 +67,7 @@ def registration(image, reference_image, contour, ransacReprojThreshold, debug=F
     transformed_img = cv2.warpPerspective(image, homography, (width, height))
 
     # show the image before registration, image after registration and the reference image for check the registration
-    # """
+    """
     fig = plt.figure()  # make a figure
     fig.add_subplot(1, 3, 1)
     plt.title("image before\nregistration")
@@ -87,7 +87,8 @@ def registration(image, reference_image, contour, ransacReprojThreshold, debug=F
 
     fig.tight_layout()
     plt.show()
-    # """
+    """
+
     """
     # check registration
     overlay = np.uint8(reference_image.copy())
