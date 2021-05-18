@@ -6,11 +6,10 @@ from pydicom import dcmread
 from get_contour import read_curve_data
 
 
-def read_and_cut_MRI_and_contour(patient, strip_thickness, tumorArea, rows_start, rows_end, columns_start, columns_end):
+def read_and_cut_MRI_and_contour(patient, strip_thickness, show_images, tumorArea, rows_start, rows_end, columns_start, columns_end):
     # number of images
     files = os.listdir('patient/' + patient)
     number_of_images = len(files) - 1
-    # print("number of images", number_of_images)
 
     """
     # cut images and contour manually
@@ -118,6 +117,7 @@ def read_and_cut_MRI_and_contour(patient, strip_thickness, tumorArea, rows_start
             plt.imshow(images[i], cmap=plt.cm.gray)
             plt.plot(contour[0], contour[1], color='b')
 
-    fig.tight_layout()
-    plt.show()
+    if show_images:
+        fig.tight_layout()
+        plt.show()
     return images, contour, number_of_images
