@@ -105,11 +105,11 @@ def read_and_cut_MRI_and_contour(patient, strip_thickness, tumorArea, rows_start
         fig.suptitle("patient " + patient + ", area without tumor", fontsize=16)
 
         #  make a square contour in the middle of the image
-        image_width = (columns_end - columns_start) / 2
-        image_height = (rows_end - rows_start) / 2
+        image_center_width = (columns_end - columns_start) / 2
+        image_center_height = (rows_end - rows_start) / 2
         contour = [[], []]
-        contour[0] = [image_width - 10, image_width + 10, image_width + 10, image_width - 10, image_width - 10]
-        contour[1] = [image_height - 10, image_height - 10, image_height + 10, image_height + 10, image_height - 10]
+        contour[0] = [image_center_width - 10, image_center_width + 10, image_center_width + 10, image_center_width - 10, image_center_width - 10]
+        contour[1] = [image_center_height - 10, image_center_height - 10, image_center_height + 10, image_center_height + 10, image_center_height - 10]
 
         for i in range(len(images)):
             images[i] = images[i][rows_start:rows_end, columns_start:columns_end]
