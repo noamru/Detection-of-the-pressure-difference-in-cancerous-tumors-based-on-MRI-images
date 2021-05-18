@@ -12,10 +12,10 @@ if __name__ == "__main__":
     # print(patlist['mri_data'])
 
     """run algorithm for all patients and save the results in patient_res file"""
-
-    # open patient_res file
-    patlist_wb = load_workbook("patient_res.xlsx")
-    patlist_data_sheet = patlist_wb["Data"]
+    """
+    # open patient_res file  for writing
+    patient_res_wb = load_workbook("patient_res.xlsx")
+    patient_res_write = patient_res_wb["Data"]
     row = 2
 
     # read patient_info file
@@ -42,12 +42,19 @@ if __name__ == "__main__":
 
         print(patient_data)
         for i in range(len(patient_data)):
-            patlist_data_sheet.cell(row, i + 1).value = patient_data[i]
+            patient_res_write.cell(row, i + 1).value = patient_data[i]
         row += 1
 
-    patlist_wb.save("patient_res.xlsx")
-
+    patient_res_wb.save("patient_res.xlsx")
+    """
     """make analysis on the results in patient_res file"""
+
+    # open patient_res file for writing
+    patient_res_wb = load_workbook("patient_res.xlsx")
+    patient_res_write = patient_res_wb["Data"]
+
+    # read patient_res file for calculations
+    patient_res_read = pd.read_excel("patient_res.xlsx", sheet_name="Data")
 
     """calculate for each kind of strip (3,5,7,9) the average and std of the incline from LinearRegression
        for the groups:
@@ -56,15 +63,8 @@ if __name__ == "__main__":
          3. patients that the radiological response was successful.
          4. patients that the radiological response was unsuccessful.
        and save the results in patient_res file"""
-
-    # open patient_res file for write in
-    # patlist_wb = load_workbook("patient_res.xlsx")
-    # patlist_data_sheet = patlist_wb["Data"]
+    """
     write_column = 12
-
-    # read patient_res file for calculations
-    patient_res = pd.read_excel("patient_res.xlsx", sheet_name="Data")
-    # print(patient_info)
 
     for column in range(4, 8):  # run on all strips
         strip = patient_res.columns[column]
@@ -90,23 +90,44 @@ if __name__ == "__main__":
         print(radiological_successful_treatment_inclines, radiological_unsuccessful_treatment_inclines)
 
         # write in pathological response - successful treatment
-        patlist_data_sheet.cell(6, write_column).value = np.mean(pathological_successful_treatment_inclines, axis=0)
-        patlist_data_sheet.cell(7, write_column).value = np.std(pathological_successful_treatment_inclines, axis=0)  # ddof= 1
+        patient_res_write.cell(6, write_column).value = np.mean(pathological_successful_treatment_inclines, axis=0)
+        patient_res_write.cell(7, write_column).value = np.std(pathological_successful_treatment_inclines, axis=0)  # ddof= 1
         write_column += 1
 
         # write in pathological response - unsuccessful treatment
-        patlist_data_sheet.cell(6, write_column).value = np.mean(pathological_unsuccessful_treatment_inclines, axis=0)
-        patlist_data_sheet.cell(7, write_column).value = np.std(pathological_unsuccessful_treatment_inclines, axis=0)
+        patient_res_write.cell(6, write_column).value = np.mean(pathological_unsuccessful_treatment_inclines, axis=0)
+        patient_res_write.cell(7, write_column).value = np.std(pathological_unsuccessful_treatment_inclines, axis=0)
         write_column += 1
 
         # write in radiological response - successful treatment
-        patlist_data_sheet.cell(6, write_column).value = np.mean(radiological_successful_treatment_inclines, axis=0)
-        patlist_data_sheet.cell(7, write_column).value = np.std(radiological_successful_treatment_inclines, axis=0)
+        patient_res_write.cell(6, write_column).value = np.mean(radiological_successful_treatment_inclines, axis=0)
+        patient_res_write.cell(7, write_column).value = np.std(radiological_successful_treatment_inclines, axis=0)
         write_column += 1
 
         # write in radiological response - unsuccessful treatment
-        patlist_data_sheet.cell(6, write_column).value = np.mean(radiological_unsuccessful_treatment_inclines, axis=0)
-        patlist_data_sheet.cell(7, write_column).value = np.std(radiological_unsuccessful_treatment_inclines, axis=0)
+        patient_res_write.cell(6, write_column).value = np.mean(radiological_unsuccessful_treatment_inclines, axis=0)
+        patient_res_write.cell(7, write_column).value = np.std(radiological_unsuccessful_treatment_inclines, axis=0)
         write_column += 1
 
-    patlist_wb.save("patient_res.xlsx")
+    patient_res_wb.save("patient_res.xlsx")
+    """
+
+    """Examining whether in cases where there has no leakage from the tumor
+    (when the incline in the strip compared to the incline of a non-cancerous area is less than the threshold value)
+    there is a difference in response to treatment between cases that had an increase inside the tumor
+    and cases that did not.
+    and save the results in patient_res file"""
+
+    write_row = 5
+    write_column = 30
+    strip = patient_res_read.columns[4]  # strip of 3 pixels
+    leakage_threshold = 2  # the threshold value for leakage from the tumor
+    for patient in range(len(patient_res_read)):
+        if patient_res_read.at[patient, strip] - patient_res_read.at[patient, "incline in non-cancerous area"] < leakage_threshold:
+            patient_res_write.cell(write_row, write_column).value = patient_res_read.at[patient, "patient"]
+            patient_res_write.cell(write_row, write_column + 1).value = str(patient_res_read.at[patient, "incline inside tumor"] > 0)
+            patient_res_write.cell(write_row, write_column + 3).value = patient_res_read.at[patient, "pathological response"]
+            patient_res_write.cell(write_row, write_column + 5).value = patient_res_read.at[patient, "radiological response"]
+            write_row += 1
+
+    patient_res_wb.save("patient_res.xlsx")
