@@ -8,7 +8,7 @@ from calculate_sum_of_intensities import (calculate_sum_of_intensities_inside_st
 from LinearRegression import LinearRegression_func
 
 
-def algorithm(patient, strip_thickness, tumorArea=True, rows_start=None, rows_end=None, columns_start=None,
+def algorithm(patient, strip_thickness, show_images, tumorArea=True, rows_start=None, rows_end=None, columns_start=None,
               columns_end=None):
     if not tumorArea:
         print("\npatient " + patient + ", area without tumor:")
@@ -19,8 +19,9 @@ def algorithm(patient, strip_thickness, tumorArea=True, rows_start=None, rows_en
 
     # Open the image files
     images, contour, number_of_images = read_and_cut_MRI_and_contour(patient=patient, strip_thickness=strip_thickness,
-                                                                     tumorArea=tumorArea, rows_start=rows_start,
-                                                                     rows_end=rows_end, columns_start=columns_start,
+                                                                     show_images=show_images, tumorArea=tumorArea,
+                                                                     rows_start=rows_start, rows_end=rows_end,
+                                                                     columns_start=columns_start,
                                                                      columns_end=columns_end)
     # print(contour)
 
@@ -67,18 +68,19 @@ def algorithm(patient, strip_thickness, tumorArea=True, rows_start=None, rows_en
     if not tumorArea:
         plt.title("increasing of intensity per pixel compared to the first image.\narea without tumor."
                   "\npressure estimate: " + str(round(coef, 3)) + ", success rates: " + str(
-            round(score, 3) * 100) + "%")
+                   round(score, 3) * 100) + "%")
     elif strip_thickness == 0:
         plt.title("increasing of intensity per pixel compared to the first image.\narea with tumor, inside tumor."
                   "\npressure estimate: " + str(round(coef, 3)) + ", success rates: " + str(
-            round(score, 3) * 100) + "%")
+                   round(score, 3) * 100) + "%")
     else:
         plt.title("increasing of intensity per pixel compared to the first image.\narea with tumor, inside strip of " +
                   str(strip_thickness) + " pixels.\npressure estimate: " + str(
                    round(coef, 3)) + ", success rates: " + str(round(score, 3) * 100) + "%")
     plt.xlabel("image number")
     plt.ylabel("intensity increase")
-    plt.show()
+    if (show_images):
+        plt.show()
 
     return round(coef, 3)
 
