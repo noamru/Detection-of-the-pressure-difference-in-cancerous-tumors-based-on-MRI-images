@@ -1,7 +1,7 @@
 import pandas as pd
 from openpyxl import load_workbook
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 """calculate for each kind of strip (3,5,7,9) the average and std of the incline from LinearRegression
            for the groups:
@@ -12,11 +12,11 @@ import numpy as np
            and save the results in patient_res file"""
 def calculate_average_and_std_of_incline():
     # open patient_res file for writing
-    patient_res_wb = load_workbook("patient_res_without_registration.xlsx")
+    patient_res_wb = load_workbook("patient_res.xlsx")
     patient_res_write = patient_res_wb["Data"]
 
     # read patient_res file for calculations
-    patient_res_read = pd.read_excel("patient_res_without_registration.xlsx", sheet_name="Data")
+    patient_res_read = pd.read_excel("patient_res.xlsx", sheet_name="Data")
 
     write_column = 12
 
@@ -65,7 +65,27 @@ def calculate_average_and_std_of_incline():
         patient_res_write.cell(7, write_column).value = np.std(radiological_unsuccessful_treatment_inclines, axis=0)
         write_column += 1
 
-        patient_res_wb.save("patient_res_without_registration.xlsx")
+        patient_res_wb.save("patient_res.xlsx")
+
+    print("calculate_average_and_std_of_incline complete\n")
+
+
+"""show graph of average and std of incline of 3 pixels strip"""
+def print_graph_of_average_and_std_of_incline():
+    # read patient_res file for calculations
+    patient_res_read = pd.read_excel("patient_res.xlsx", sheet_name="Data")
+
+    x = ["pathological response-\nSuccessful treatment", "pathological response-\nUnsuccessful treatment",
+         "radiological response-\nSuccessful treatment", "radiological response-\nUnsuccessful treatment"]
+
+    average = [patient_res_read.iat[4, 11], patient_res_read.iat[4, 12], patient_res_read.iat[4, 13], patient_res_read.iat[4, 14]]
+    std = [patient_res_read.iat[5, 11], patient_res_read.iat[5, 12], patient_res_read.iat[5, 13], patient_res_read.iat[5, 14]]
+
+    plt.style.use('seaborn-whitegrid')
+    plt.errorbar(x, average, std, fmt='o', capsize=5)
+
+    plt.show()
+
 
 
 """Examining whether in cases where there has no leakage from the tumor
@@ -75,11 +95,11 @@ def calculate_average_and_std_of_incline():
     and save the results in patient_res file"""
 def calculate_difference_in_response_to_treatment():
     # open patient_res file for writing
-    patient_res_wb = load_workbook("patient_res_without_registration.xlsx")
+    patient_res_wb = load_workbook("patient_res.xlsx")
     patient_res_write = patient_res_wb["Data"]
 
     # read patient_res file for calculations
-    patient_res_read = pd.read_excel("patient_res_without_registration.xlsx", sheet_name="Data")
+    patient_res_read = pd.read_excel("patient_res.xlsx", sheet_name="Data")
 
     write_column = 30
     for column in range(4, 8):  # run on all strips
@@ -99,4 +119,6 @@ def calculate_difference_in_response_to_treatment():
                 write_row += 1
         write_column += 7
 
-    patient_res_wb.save("patient_res_without_registration.xlsx")
+    patient_res_wb.save("patient_res.xlsx")
+
+    print("calculate_difference_in_response_to_treatment complete\n")
