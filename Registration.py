@@ -61,10 +61,19 @@ def registration(image, reference_image, contour, ransacReprojThreshold, debug=F
     # Find the homography matrix.
     # using Random sample consensus alg
     homography, mask = cv2.findHomography(p1, p2, method=cv2.RANSAC, ransacReprojThreshold=ransacReprojThreshold)
+    # print(homography)
+    # print("max: ", np.amax(homography), "min: ", np.amin(homography))
 
     # Use this matrix to transform the
-    # colored image wrt the reference image.
-    transformed_img = cv2.warpPerspective(image, homography, (width, height))
+    # second image according to the reference image.
+    # if the registration not good we stay with the original image.
+    if np.amax(homography) < 10 and np.amin(homography) > -20:
+        # print("homography in range")
+        transformed_img = cv2.warpPerspective(image, homography, (width, height))
+    else:
+        # print("homography isn't in range")
+        transformed_img = image
+    print("\n")
 
     # show the image before registration, image after registration and the reference image for check the registration
     """
