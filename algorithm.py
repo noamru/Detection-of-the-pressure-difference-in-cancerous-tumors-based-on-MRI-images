@@ -69,17 +69,23 @@ def algorithm(patient, strip_thickness, show_images, tumorArea=True, rows_start=
         plt.title("increasing of intensity per pixel compared to the first image.\narea without tumor."
                   "\npressure estimate: " + str(round(coef, 3)) + ", success rates: " + str(
                    round(score, 3) * 100) + "%")
+        # plt.title(patient + "-pressure estimate: " + str(round(coef, 3)) + ",\nsuccess rates: " + str(round(score, 3) * 100) + "%")
+
     elif strip_thickness == 0:
         plt.title("increasing of intensity per pixel compared to the first image.\narea with tumor, inside tumor."
                   "\npressure estimate: " + str(round(coef, 3)) + ", success rates: " + str(
                    round(score, 3) * 100) + "%")
+        # plt.title(patient + "-pressure estimate: " + str(round(coef, 3)) + ",\nsuccess rates: " + str(round(score, 3) * 100) + "%")
+
     else:
         plt.title("increasing of intensity per pixel compared to the first image.\narea with tumor, inside strip of " +
                   str(strip_thickness) + " pixels.\npressure estimate: " + str(
                    round(coef, 3)) + ", success rates: " + str(round(score, 3) * 100) + "%")
+        # plt.title(patient + "-pressure estimate: " + str(round(coef, 3)) + ",\nsuccess rates: " + str(round(score, 3) * 100) + "%")
+
     plt.xlabel("image number")
     plt.ylabel("intensity increase")
-    if (show_images):
+    if show_images:
         plt.show()
 
     return round(coef, 3)
